@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Okewunmi Solomon Dynasty</title>
+<style>
+  /* Reset & Global Styles */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Georgia', serif; color: #333; }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* Navigation */
+  nav {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
+  }
+  nav ul { display: flex; list-style: none; }
+  nav ul li { margin: 0 20px; }
+  nav ul li a { padding: 15px 0; display: block; font-weight: bold; color: #ffd700; transition: 0.3s; }
+  nav ul li a:hover { color: #ff6f61; }
+
+  /* Hero Section */
+  #home { position: relative; height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center; overflow: hidden; color: #fff; }
+  #home .overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index:1; }
+  #home h1 { font-size: 5rem; z-index:2; text-shadow: 4px 4px 15px rgba(0,0,0,0.7); background: linear-gradient(to right, #ffd700, #ff6f61); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: floatIn 2s ease forwards; }
+  @keyframes floatIn { from { opacity:0; transform:translateY(-30px); } to { opacity:1; transform:translateY(0); } }
+  #home .scripture { font-size: 1.8rem; max-width: 900px; line-height:1.6; opacity:0; position: absolute; text-shadow:2px 2px 10px rgba(0,0,0,0.7); z-index:2; transition: opacity 1s ease-in-out; }
+  #home .scripture.active { opacity:1; position: relative; }
+
+  /* About Section */
+  #about { padding: 80px 20px; background: #fefefe; color:#333; text-align: center; }
+  #about h2 { font-size: 3rem; margin-bottom: 20px; background: linear-gradient(to right,#6a11cb,#2575fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  #about p { max-width: 800px; margin: 15px auto; font-size:1.1rem; line-height:1.6; }
+
+  /* Family Tree */
+  #family { padding: 80px 20px; background:#f0f8ff; text-align:center; }
+  #family h2 { font-size:3rem; margin-bottom:40px; color:#6a11cb; }
+  .children-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:30px; max-width:1200px; margin:0 auto; }
+  .child-card { background:#fff; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.1); overflow:hidden; transition:0.3s; cursor:pointer; }
+  .child-card img { width:100%; height:280px; object-fit:cover; }
+  .child-card h4 { font-size:1.5rem; margin:15px; color:#ff6f61; }
+  .child-card p { font-size:1rem; margin:15px; display:none; color:#333; line-height:1.5; }
+  .child-card.expanded p { display:block; }
+
+  /* Contact Section */
+  #contact { padding:80px 20px; background:#fff; text-align:center; }
+  #contact h2 { font-size:3rem; margin-bottom:40px; color:#2575fc; }
+  #contact iframe { max-width:640px; width:100%; height:717px; border:none; border-radius:15px; }
+
+  /* Address & Map */
+  #address { padding:80px 20px; background:#f0f8ff; text-align:center; }
+  #address h2 { font-size:3rem; margin-bottom:20px; color:#6a11cb; }
+  #address p { font-size:1.2rem; margin-bottom:20px; }
+  #address iframe { width:100%; max-width:700px; height:400px; border:none; border-radius:15px; }
+
+  /* Footer */
+  footer { padding:40px 20px; background:#111; color:#fff; text-align:center; }
+  footer a { color:#ffd700; margin:0 10px; transition:0.3s; }
+  footer a:hover { color:#ff6f61; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <ul>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#family">Family Tree</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#address">Address</a></li>
+  </ul>
+</nav>
+
+<!-- Home Section -->
+<section id="home">
+  <div class="overlay"></div>
+  <h1>Okewunmi Solomon Dynasty</h1>
+  <div class="scripture active">“But as for me and my house, we will serve the Lord.” – Joshua 24:15</div>
+  <div class="scripture">“The Lord is my shepherd, I shall not want.” – Psalm 23:1</div>
+  <div class="scripture">“I can do all things through Christ who strengthens me.” – Philippians 4:13</div>
+  <div class="scripture">“Train up a child in the way he should go, and when he is old he will not depart from it.” – Proverbs 22:6</div>
+  <div class="scripture">“But they that wait upon the Lord shall renew their strength.” – Isaiah 40:31</div>
+</section>
+
+<!-- About Section -->
+<section id="about">
+  <h2>Welcome to the Okewunmi Dynasty</h2>
+  <p>The Okewunmi Dynasty is a family rooted in truth, sacrifice, faith, and legacy. At the heart of this great family is Elder Solomon Okewunmi, a man widely respected for his integrity, wisdom, and selfless devotion.</p>
+  <p>Born and raised in Ogun State, Egba, Abeokuta—Itori Oke, Elder Solomon has lived his life as a shining example of what it means to serve both family and community with unwavering commitment. By his side is his beloved wife, Deaconess Adebola Okewunmi, a virtuous woman and nurturing mother of many.</p>
+</section>
+
+<!-- Family Tree Section -->
+<section id="family">
+  <h2>The Okewunmi Children</h2>
+  <div class="children-grid">
+    <div class="child-card">
+      <img src="https://source.unsplash.com/200x200/?woman,portrait" alt="Oshode Damilola">
+      <h4>Oshode Damilola (née Mama Oshode)</h4>
+      <p>The firstborn of the family, Damilola, stands as a model of resilience, wisdom, and industriousness...</p>
+    </div>
+    <div class="child-card">
+      <img src="https://source.unsplash.com/200x200/?man,portrait" alt="Engr. Okewunmi Ayomide">
+      <h4>Engr. Okewunmi Ayomide</h4>
+      <p>The second-born and first son, Ayomide, is a skilled engineer specializing in heavy-duty machine repairs...</p>
+    </div>
+    <!-- Add all remaining children similarly -->
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact">
+  <h2>Contact Us</h2>
+  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeN1kMPPgv2iPpUVwLFEwgaz2ByBReTDfZK72zkHqggERIJkQ/viewform?embedded=true"></iframe>
+</section>
+
+<!-- Address & Map Section -->
+<section id="address">
+  <h2>Our Address</h2>
+  <p>3 Adaranijo Close, Ipokia Street off Agoro Road, Owode Otta, Ogun State, Nigeria</p>
+  <p>Phone: 09056658964 | Email: triangleofscholartimi@gmail.com</p>
+  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3969.594868706088!2d3.279153!3d6.740219!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b9e52c2a9c43f%3A0x8a5a8285d09b1c2d!2sOwode%20Otta%2C%20Ogun%20State!5e0!3m2!1sen!2sng!4v1700850245634!5m2!1sen!2sng" allowfullscreen="" loading="lazy"></iframe>
+</section>
+
+<!-- Footer -->
+<footer>
+  &copy; 2025 Okewunmi Solomon Dynasty | 
+  <a href="https://facebook.com" target="_blank">Facebook</a> | 
+  <a href="https://youtube.com" target="_blank">YouTube</a>
+</footer>
+
+<script>
+  // Background slideshow
+  const images = [
+    "https://source.unsplash.com/1600x900/?church,cross",
+    "https://source.unsplash.com/1600x900/?bible,prayer",
+    "https://source.unsplash.com/1600x900/?faith,christ",
+    "https://source.unsplash.com/1600x900/?worship,light",
+    "https://source.unsplash.com/1600x900/?god,church"
+  ];
+  images.forEach(url => { const img = new Image(); img.src = url; });
+  const home = document.getElementById('home');
+  let bgIndex = 0;
+  setInterval(() => {
+    bgIndex = (bgIndex + 1) % images.length;
+    home.style.backgroundImage = `url(${images[bgIndex]})`;
+    home.style.backgroundSize = 'cover';
+    home.style.backgroundPosition = 'center';
+  }, 6000);
+
+  // Scripture rotation
+  const scriptures = document.querySelectorAll('#home .scripture');
+  let sIndex = 0;
+  setInterval(() => {
+    scriptures.forEach(s => s.classList.remove('active'));
+    scriptures[sIndex % scriptures.length].classList.add('active');
+    sIndex++;
+  }, 6000);
+
+  // Expand child bios
+  const cards = document.querySelectorAll('.child-card');
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('expanded');
+    });
+  });
+</script>
+
+</body>
+</html>
