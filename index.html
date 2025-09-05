@@ -274,3 +274,121 @@
   </script>
 </body>
 </html>
+
+<!-- Family Tree Section -->
+<section class="container" style="margin-top: 80px;">
+  <h2 style="text-align:center; font-size:2.5rem; color:#4B0082; margin-bottom:40px;">Okewunmi Family Tree</h2>
+
+  <div class="tree">
+    <!-- Parents -->
+    <ul>
+      <li>
+        <div class="parent">Elder Solomon & Deaconess Adebola</div>
+        <ul>
+          <!-- Children -->
+          <li>
+            <div class="child">Oshode Damilola</div>
+            <ul>
+              <!-- Grandchildren -->
+              <li><div class="grandchild">Ademide</div></li>
+              <li><div class="grandchild">Iremide</div></li>
+            </ul>
+          </li>
+
+          <li>
+            <div class="child">Engr. Okewunmi Ayomide</div>
+            <ul>
+              <li><div class="grandchild">Simon</div></li>
+            </ul>
+          </li>
+
+          <li><div class="child">Okewunmi Oluwagbenga</div></li>
+
+          <li><div class="child">Okewunmi Opeyemi</div></li>
+
+          <li>
+            <div class="child">Pastor Okewunmi Abayomi</div>
+            <ul>
+              <li><div class="grandchild">Kenen</div></li>
+            </ul>
+          </li>
+
+          <li>
+            <div class="child">Okewunmi Motunrayo</div>
+            <ul>
+              <li><div class="grandchild">Oreoluwa</div></li>
+            </ul>
+          </li>
+
+          <li><div class="child">Okewunmi Timileyin</div></li>
+          <li><div class="child">Okewunmi Pelumi Paul</div></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  /* Family Tree Styles */
+  .tree ul {
+    padding-top: 20px; 
+    position: relative;
+    transition: all 0.5s;
+  }
+
+  .tree li {
+    float: left;
+    text-align: center;
+    list-style-type: none;
+    position: relative;
+    padding: 20px 5px 0 5px;
+    transition: all 0.5s;
+  }
+
+  /* Lines connecting nodes */
+  .tree li::before, .tree li::after {
+    content: '';
+    position: absolute; top: 0; right: 50%;
+    border-top: 2px solid #4B0082;
+    width: 50%; height: 20px;
+  }
+  .tree li::after {
+    right: auto; left: 50%;
+    border-left: 2px solid #4B0082;
+  }
+
+  .tree li:only-child::before, .tree li:only-child::after {
+    display: none;
+  }
+
+  .tree li:only-child { padding-top: 0; }
+
+  .tree li div {
+    border: 2px solid #4B0082;
+    padding: 10px 15px;
+    text-align: center;
+    border-radius: 10px;
+    display: inline-block;
+    background: #fcb69f;
+    color: #fff;
+    font-weight: bold;
+    min-width: 100px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  .tree li ul::before {
+    content: '';
+    position: absolute; top: 0; left: 50%;
+    border-left: 2px solid #4B0082;
+    width: 0; height: 20px;
+  }
+
+  /* Grandchildren style */
+  .grandchild { background: #ff7e5f; }
+
+  /* Responsive */
+  @media(max-width:768px){
+    .tree li { float: none; padding: 20px 0 0 0; }
+    .tree li::before, .tree li::after, .tree li ul::before { display: none; }
+  }
+</style>
