@@ -5,175 +5,272 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Okewunmi Solomon Dynasty</title>
 <style>
-  /* Reset & Global Styles */
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Georgia', serif; color: #333; }
+  html, body { font-family: 'Georgia', serif; overflow-x: hidden; }
 
-  a { text-decoration: none; color: inherit; }
-
-  /* Navigation */
-  nav {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.7);
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    z-index: 1000;
+  /* Slideshow Background */
+  .slideshow-container {
+    position: relative; /* changed from fixed */
+    width: 100%; 
+    height: 100vh; /* full viewport height */
+    background-size: cover;
+    background-position: center;
+    transition: opacity 1s ease-in-out, transform 20s linear;
+    transform: scale(1);
+    opacity: 1;
   }
-  nav ul { display: flex; list-style: none; }
-  nav ul li { margin: 0 20px; }
-  nav ul li a { padding: 15px 0; display: block; font-weight: bold; color: #ffd700; transition: 0.3s; }
-  nav ul li a:hover { color: #ff6f61; }
 
-  /* Hero Section */
-  #home { position: relative; height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center; overflow: hidden; color: #fff; }
-  #home .overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index:1; }
-  #home h1 { font-size: 5rem; z-index:2; text-shadow: 4px 4px 15px rgba(0,0,0,0.7); background: linear-gradient(to right, #ffd700, #ff6f61); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: floatIn 2s ease forwards; }
-  @keyframes floatIn { from { opacity:0; transform:translateY(-30px); } to { opacity:1; transform:translateY(0); } }
-  #home .scripture { font-size: 1.8rem; max-width: 900px; line-height:1.6; opacity:0; position: absolute; text-shadow:2px 2px 10px rgba(0,0,0,0.7); z-index:2; transition: opacity 1s ease-in-out; }
-  #home .scripture.active { opacity:1; position: relative; }
+  .overlay {
+    position: absolute; /* changed from fixed */
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.5);
+  }
 
-  /* About Section */
-  #about { padding: 80px 20px; background: #fefefe; color:#333; text-align: center; }
-  #about h2 { font-size: 3rem; margin-bottom: 20px; background: linear-gradient(to right,#6a11cb,#2575fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  #about p { max-width: 800px; margin: 15px auto; font-size:1.1rem; line-height:1.6; }
+  /* Homepage Content */
+  .content {
+    position: relative;
+    z-index: 1;
+    height: 100vh; /* full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+  }
 
-  /* Family Tree */
-  #family { padding: 80px 20px; background:#f0f8ff; text-align:center; }
-  #family h2 { font-size:3rem; margin-bottom:40px; color:#6a11cb; }
-  .children-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:30px; max-width:1200px; margin:0 auto; }
-  .child-card { background:#fff; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.1); overflow:hidden; transition:0.3s; cursor:pointer; }
-  .child-card img { width:100%; height:280px; object-fit:cover; }
-  .child-card h4 { font-size:1.5rem; margin:15px; color:#ff6f61; }
-  .child-card p { font-size:1rem; margin:15px; display:none; color:#333; line-height:1.5; }
-  .child-card.expanded p { display:block; }
+  h1 {
+    font-size: 6rem;
+    font-weight: 900;
+    color: #ffd700;
+    text-shadow: 4px 4px 15px rgba(0,0,0,0.7);
+    margin-bottom: 40px;
+    animation: floatIn 2s ease forwards;
+  }
 
-  /* Contact Section */
-  #contact { padding:80px 20px; background:#fff; text-align:center; }
-  #contact h2 { font-size:3rem; margin-bottom:40px; color:#2575fc; }
-  #contact iframe { max-width:640px; width:100%; height:717px; border:none; border-radius:15px; }
+  @keyframes floatIn {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-  /* Address & Map */
-  #address { padding:80px 20px; background:#f0f8ff; text-align:center; }
-  #address h2 { font-size:3rem; margin-bottom:20px; color:#6a11cb; }
-  #address p { font-size:1.2rem; margin-bottom:20px; }
-  #address iframe { width:100%; max-width:700px; height:400px; border:none; border-radius:15px; }
+  .scripture {
+    font-size: 2rem;
+    max-width: 900px;
+    line-height: 1.6;
+    opacity: 0;
+    position: absolute;
+    color: #fff;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+    transition: opacity 1s ease-in-out;
+  }
 
-  /* Footer */
-  footer { padding:40px 20px; background:#111; color:#fff; text-align:center; }
-  footer a { color:#ffd700; margin:0 10px; transition:0.3s; }
-  footer a:hover { color:#ff6f61; }
+  .scripture.active { opacity: 1; position: relative; }
+
+  @media (max-width: 768px) {
+    h1 { font-size: 3rem; }
+    .scripture { font-size: 1.3rem; padding: 0 10px; }
+  }
+
+  /* About Page Styles */
+  body.about {
+    background: linear-gradient(135deg, #f6d365, #fda085);
+    color: #333;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px 20px;
+  }
+
+  h1, h2, h3 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  h1.about-title {
+    font-size: 3rem;
+    color: #4B0082;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+  }
+
+  h2 { font-size: 2.2rem; color: #FF4500; }
+  h3 { font-size: 1.8rem; color: #333; margin-top:50px; margin-bottom:20px; }
+
+  p { font-size: 1.1rem; margin-bottom: 20px; }
+
+  .dynasty-intro {
+    background: linear-gradient(to right, #ffecd2, #fcb69f);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    margin-bottom: 60px;
+  }
+
+  .children-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+  }
+
+  .child-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .child-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+  }
+
+  .child-card img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    border: 4px solid #ff7e5f;
+  }
+
+  .child-card h4 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    background: linear-gradient(to right, #ff7e5f, #feb47b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .child-card p { color: #555; }
+
+  @media(max-width:768px){
+    h1.about-title { font-size: 2.5rem; }
+    h2 { font-size: 1.8rem; }
+    h3 { font-size: 1.5rem; }
+    .child-card img { width: 120px; height: 120px; }
+  }
 </style>
 </head>
 <body>
 
-<!-- Navigation -->
-<nav>
-  <ul>
-    <li><a href="#home">Home</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#family">Family Tree</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#address">Address</a></li>
-  </ul>
-</nav>
-
-<!-- Home Section -->
-<section id="home">
+  <!-- Homepage Section -->
+  <div class="slideshow-container"></div>
   <div class="overlay"></div>
-  <h1>Okewunmi Solomon Dynasty</h1>
-  <div class="scripture active">“But as for me and my house, we will serve the Lord.” – Joshua 24:15</div>
-  <div class="scripture">“The Lord is my shepherd, I shall not want.” – Psalm 23:1</div>
-  <div class="scripture">“I can do all things through Christ who strengthens me.” – Philippians 4:13</div>
-  <div class="scripture">“Train up a child in the way he should go, and when he is old he will not depart from it.” – Proverbs 22:6</div>
-  <div class="scripture">“But they that wait upon the Lord shall renew their strength.” – Isaiah 40:31</div>
-</section>
 
-<!-- About Section -->
-<section id="about">
-  <h2>Welcome to the Okewunmi Dynasty</h2>
-  <p>The Okewunmi Dynasty is a family rooted in truth, sacrifice, faith, and legacy. At the heart of this great family is Elder Solomon Okewunmi, a man widely respected for his integrity, wisdom, and selfless devotion.</p>
-  <p>Born and raised in Ogun State, Egba, Abeokuta—Itori Oke, Elder Solomon has lived his life as a shining example of what it means to serve both family and community with unwavering commitment. By his side is his beloved wife, Deaconess Adebola Okewunmi, a virtuous woman and nurturing mother of many.</p>
-</section>
-
-<!-- Family Tree Section -->
-<section id="family">
-  <h2>The Okewunmi Children</h2>
-  <div class="children-grid">
-    <div class="child-card">
-      <img src="https://source.unsplash.com/200x200/?woman,portrait" alt="Oshode Damilola">
-      <h4>Oshode Damilola (née Mama Oshode)</h4>
-      <p>The firstborn of the family, Damilola, stands as a model of resilience, wisdom, and industriousness...</p>
-    </div>
-    <div class="child-card">
-      <img src="https://source.unsplash.com/200x200/?man,portrait" alt="Engr. Okewunmi Ayomide">
-      <h4>Engr. Okewunmi Ayomide</h4>
-      <p>The second-born and first son, Ayomide, is a skilled engineer specializing in heavy-duty machine repairs...</p>
-    </div>
-    <!-- Add all remaining children similarly -->
+  <div class="content">
+    <h1>Okewunmi Solomon Dynasty</h1>
+    <div class="scripture active">“But as for me and my house, we will serve the Lord.” – Joshua 24:15</div>
+    <div class="scripture">“The Lord is my shepherd, I shall not want.” – Psalm 23:1</div>
+    <div class="scripture">“I can do all things through Christ who strengthens me.” – Philippians 4:13</div>
+    <div class="scripture">“Train up a child in the way he should go, and when he is old he will not depart from it.” – Proverbs 22:6</div>
+    <div class="scripture">“But they that wait upon the Lord shall renew their strength.” – Isaiah 40:31</div>
   </div>
-</section>
 
-<!-- Contact Section -->
-<section id="contact">
-  <h2>Contact Us</h2>
-  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeN1kMPPgv2iPpUVwLFEwgaz2ByBReTDfZK72zkHqggERIJkQ/viewform?embedded=true"></iframe>
-</section>
+  <!-- About Section -->
+  <div class="container about">
+    <section class="dynasty-intro">
+      <h1 class="about-title">Welcome to the Okewunmi Dynasty</h1>
+      <p>The Okewunmi Dynasty is a family rooted in truth, faith, sacrifice, and legacy. At the heart of this great family is Elder Solomon Okewunmi, a man widely respected for his integrity, wisdom, and selfless devotion. Born and raised in Ogun State, Egba, Abeokuta—Itori Oke, Elder Solomon exemplifies a life of service to both family and community.</p>
+      <p>Now at the age of 71 (in 2025), Elder Solomon continues to stand as a pillar of strength and guidance. By his side is his beloved wife, Deaconess Adebola Okewunmi, a virtuous woman and nurturing mother. Together, they have built a strong family rooted in love, discipline, and godliness.</p>
+    </section>
 
-<!-- Address & Map Section -->
-<section id="address">
-  <h2>Our Address</h2>
-  <p>3 Adaranijo Close, Ipokia Street off Agoro Road, Owode Otta, Ogun State, Nigeria</p>
-  <p>Phone: 09056658964 | Email: triangleofscholartimi@gmail.com</p>
-  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3969.594868706088!2d3.279153!3d6.740219!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b9e52c2a9c43f%3A0x8a5a8285d09b1c2d!2sOwode%20Otta%2C%20Ogun%20State!5e0!3m2!1sen!2sng!4v1700850245634!5m2!1sen!2sng" allowfullscreen="" loading="lazy"></iframe>
-</section>
+    <section>
+      <h2>The Okewunmi Children</h2>
+      <div class="children-grid">
 
-<!-- Footer -->
-<footer>
-  &copy; 2025 Okewunmi Solomon Dynasty | 
-  <a href="https://facebook.com" target="_blank">Facebook</a> | 
-  <a href="https://youtube.com" target="_blank">YouTube</a>
-</footer>
+        <div class="child-card">
+  <img src="https://source.unsplash.com/200x200/?woman,portrait" alt="Oshode Damilola">
+  <h4>Oshode Damilola (née Mama Oshode)</h4>
+  <p>The firstborn of the family, Damilola, stands as a model of resilience, wisdom, and industriousness. A graduate of Computer Science from Ire Ekiti Polytechnic, she is a leather materials mogul. Married to Mr. Oshode Damilare, blessed with two children, Ademide and Iremide.</p>
+</div>
 
-<script>
-  // Background slideshow
-  const images = [
-    "https://source.unsplash.com/1600x900/?church,cross",
-    "https://source.unsplash.com/1600x900/?bible,prayer",
-    "https://source.unsplash.com/1600x900/?faith,christ",
-    "https://source.unsplash.com/1600x900/?worship,light",
-    "https://source.unsplash.com/1600x900/?god,church"
-  ];
-  images.forEach(url => { const img = new Image(); img.src = url; });
-  const home = document.getElementById('home');
-  let bgIndex = 0;
-  setInterval(() => {
-    bgIndex = (bgIndex + 1) % images.length;
-    home.style.backgroundImage = `url(${images[bgIndex]})`;
-    home.style.backgroundSize = 'cover';
-    home.style.backgroundPosition = 'center';
-  }, 6000);
+<div class="child-card">
+  <img src="https://source.unsplash.com/200x200/?man,portrait" alt="Engr. Okewunmi Ayomide">
+  <h4>Engr. Okewunmi Ayomide</h4>
+  <p>The second-born and first son, Ayomide, is a skilled engineer specializing in heavy-duty machine repairs. He is launching “Okewunmi Autos.” Married to Simisola Okewunmi, blessed with a son, Simon Okewunmi.</p>
+</div>
 
-  // Scripture rotation
-  const scriptures = document.querySelectorAll('#home .scripture');
-  let sIndex = 0;
-  setInterval(() => {
-    scriptures.forEach(s => s.classList.remove('active'));
-    scriptures[sIndex % scriptures.length].classList.add('active');
-    sIndex++;
-  }, 6000);
+<div class="child-card">
+  <img src="https://source.unsplash.com/200x200/?man,smile" alt="Okewunmi Oluwagbenga">
+  <h4>Okewunmi Oluwagbenga</h4>
+  <p>The third-born, Oluwagbenga, embodies entrepreneurial creativity in the shoe and fashion industry. Married and building a family on love, respect, and godly values.</p>
+</div>
 
-  // Expand child bios
-  const cards = document.querySelectorAll('.child-card');
-  cards.forEach(card => {
-    card.addEventListener('click', () => {
-      card.classList.toggle('expanded');
-    });
-  });
-</script>
+<div class="child-card">
+  <img src="https://source.unsplash.com/200x200/?woman,smile" alt="Okewunmi Opeyemi">
+  <h4>Okewunmi Opeyemi (Mrs. Mathew)</h4>
+  <p>The fourth-born, Opeyemi, thrives in the fabric and textile industry. Married to Pastor Mathew, they raise a godly family, continuing the faith legacy.</p>
+</div>
 
+<div class="child-card">
+  <img src="https://source.unsplash.com/200x200/?pastor,man" alt="Pastor Okewunmi Abayomi">
+  <h4>Pastor Okewunmi Abayomi (Yomi)</h4>
+  <p>The fifth-born, Yomi, is a scholar and minister of the Gospel. Senior Pastor at Salvation Proclaimers Anointed Church, founder of Edu Top Consultant, married to Dr. (Mrs.) Kehinde Okewunmi, blessed with a son.</p>
+</div>
+
+<div class="child-card">
+  <img src="https://source.unsplash.com/200x200/?lady,portrait" alt="Okewunmi Motunrayo">
+  <h4>Okewunmi Motunrayo (Mrs. Lucky Aba)</h4>
+  <p>The sixth-born, Motunrayo, is a Laboratory Scientist, fashionista, NGO founder, minister of the Word, and entrepreneur. Married to Mr. Lucky Aba, blessed with a son.</p>
+</div>
+
+<div class="child-card">
+  <img src="https://source.unsplash.com/200x200/?young,man" alt="Okewunmi Timileyin">
+  <h4>Okewunmi Timileyin</h4>
+  <p>The seventh-born, Timileyin, is a graduate of Counseling Psychology, poet, novelist, software developer, cybersecurity graduate, and media director. Unmarried but in a promising relationship.</p>
+</div>
+
+<div class="child-card">
+  <img src="https://source.unsplash.com/200x200/?student,man" alt="Okewunmi Pelumi Paul">
+  <h4>Okewunmi Pelumi Paul</h4>
+  <p>The last-born, Pelumi Paul, is a law student, tech entrepreneur, motivational speaker, Amazon affiliate marketer, and poet. Known as the youngest motivational speaker in Africa.</p>
+</div>
+</div> <!-- End of .children-grid -->
+    </section> <!-- End of Children Section -->
+  </div> <!-- End of .container -->
+
+  <script>
+    // Background images
+    const images = [
+      "https://images.unsplash.com/photo-1508780709619-79562169bc64?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1497119146429-8fc0c7d6aa6f?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1546484959-f95d37e4310f?auto=format&fit=crop&w=1600&q=80"
+    ];
+
+    const slideshow = document.querySelector('.slideshow-container');
+    const scriptures = document.querySelectorAll('.scripture');
+    let index = 0;
+
+    // Preload images
+    images.forEach(url => { const img = new Image(); img.src = url; });
+
+    // Initial background
+    slideshow.style.backgroundImage = `url(${images[0]})`;
+    slideshow.style.transform = "scale(1.05)";
+
+    function rotateContent() {
+      slideshow.style.opacity = 0;
+      setTimeout(() => {
+        index = (index + 1) % images.length;
+        slideshow.style.backgroundImage = `url(${images[index]})`;
+        slideshow.style.opacity = 1;
+        slideshow.style.transform = "scale(1)";
+        setTimeout(() => { slideshow.style.transform = "scale(1.05)"; }, 100);
+      }, 500);
+
+      scriptures.forEach(text => text.classList.remove('active'));
+      scriptures[index % scriptures.length].classList.add('active');
+    }
+
+    setInterval(rotateContent, 6000);
+  </script>
 </body>
 </html>
