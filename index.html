@@ -4,37 +4,35 @@
 <style>
 body {
   margin: 0;
-  background: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  background: #050505;
+  overflow: hidden;
 }
 
-.orb {
+.layer {
+  position: absolute;
   width: 300px;
   height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #00f0ff, #001);
-  box-shadow: 0 0 60px #00f0ff;
-  animation: pulse 4s infinite ease-in-out;
+  backdrop-filter: blur(40px);
+  border-radius: 30px;
+  background: rgba(255,255,255,0.05);
+  animation: move 15s infinite alternate ease-in-out;
 }
 
-@keyframes pulse {
-  0%,100% {
-    transform: scale(1);
-    filter: hue-rotate(0deg);
-  }
-  50% {
-    transform: scale(1.2);
-    filter: hue-rotate(180deg);
-  }
+.layer:nth-child(1) { top: 10%; left: 20%; }
+.layer:nth-child(2) { top: 50%; left: 60%; animation-delay: 3s; }
+.layer:nth-child(3) { top: 70%; left: 10%; animation-delay: 6s; }
+
+@keyframes move {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-100px) rotate(180deg); }
 }
 </style>
 </head>
 <body>
 
-<div class="orb"></div>
+<div class="layer"></div>
+<div class="layer"></div>
+<div class="layer"></div>
 
 </body>
 </html>
