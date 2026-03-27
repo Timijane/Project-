@@ -2,37 +2,54 @@
 <html>
 <head>
 <style>
-body {
-  margin: 0;
-  background: #050505;
-  overflow: hidden;
-}
-
-.layer {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  backdrop-filter: blur(40px);
-  border-radius: 30px;
-  background: rgba(255,255,255,0.05);
-  animation: move 15s infinite alternate ease-in-out;
-}
-
-.layer:nth-child(1) { top: 10%; left: 20%; }
-.layer:nth-child(2) { top: 50%; left: 60%; animation-delay: 3s; }
-.layer:nth-child(3) { top: 70%; left: 10%; animation-delay: 6s; }
-
-@keyframes move {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-100px) rotate(180deg); }
-}
+body { margin:0; overflow:hidden; background:#000; }
 </style>
 </head>
 <body>
 
-<div class="layer"></div>
-<div class="layer"></div>
-<div class="layer"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
 
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const particles = new THREE.BufferGeometry();
+const count = 5000;
+const positions = new Float32Array(count * 3);
+
+for(let i=0;i<count;i++){
+  positions[i*3] = (Math.random()-0.5)*50;
+  positions[i*3+1] = (Math.random()-0.5)*50;
+  positions[i*3+2] = (Math.random()-0.5)*50;
+}
+
+particles.setAttribute('position', new THREE.BufferAttribute(positions,3));
+
+const material = new THREE.PointsMaterial({ color:0x00ffff, size:0.1 });
+const mesh = new THREE.Points(particles, material);
+scene.add(mesh);
+
+camera.position.z = 10;
+
+let mouseX=0, mouseY=0;
+
+document.addEventListener('mousemove', e=>{
+  mouseX = (e.clientX - innerWidth/2)/200;
+  mouseY = (e.clientY - innerHeight/2)/200;
+});
+
+function animate(){
+  requestAnimationFrame(animate);
+  mesh.rotation.y += 0.001;
+  mesh.rotation.x += 0.001;
+  camera.position.x += (mouseX - camera.position.x)*0.05;
+  camera.position.y += (-mouseY - camera.position.y)*0.05;
+  renderer.render(scene, camera);
+}
+animate();
+</script>
 </body>
 </html>
