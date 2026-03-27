@@ -1,36 +1,35 @@
 <!DOCTYPE html>
-<html>
-<body style="margin:0;background:black;">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
-
-<script>
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
-const renderer = new THREE.WebGLRenderer({alpha:true});
-renderer.setSize(innerWidth,innerHeight);
-document.body.appendChild(renderer.domElement);
-
-const light = new THREE.PointLight(0x00ffff,2,50);
-light.position.set(0,0,5);
-scene.add(light);
-
-const geometry = new THREE.BoxGeometry(10,0.1,0.1);
-const material = new THREE.MeshBasicMaterial({color:0x00ffff});
-
-for(let i=0;i<20;i++){
- let beam = new THREE.Mesh(geometry,material);
- beam.position.y = i - 10;
- scene.add(beam);
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>3D Gradient Mesh</title>
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #0a0a0a;
 }
 
-camera.position.z = 10;
-
-function animate(){
- requestAnimationFrame(animate);
- scene.rotation.z += 0.002;
- renderer.render(scene,camera);
+.mesh {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 30%, #ff00cc, transparent),
+              radial-gradient(circle at 70% 60%, #00ccff, transparent),
+              radial-gradient(circle at 50% 80%, #6600ff, transparent);
+  animation: move 20s infinite linear;
+  filter: blur(100px);
 }
-animate();
-</script>
+
+@keyframes move {
+  0% { transform: translate(-25%, -25%) rotate(0deg); }
+  50% { transform: translate(-30%, -20%) rotate(180deg); }
+  100% { transform: translate(-25%, -25%) rotate(360deg); }
+}
+</style>
+</head>
+<body>
+<div class="mesh"></div>
 </body>
 </html>
