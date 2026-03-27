@@ -4,53 +4,29 @@
 <style>
 body {
   margin: 0;
-  height: 100vh;
   background: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 1000px;
+  overflow: hidden;
 }
 
-.cube {
-  width: 150px;
-  height: 150px;
-  position: relative;
-  transform-style: preserve-3d;
-  animation: rotate 10s infinite linear;
-}
-
-.face {
+.grid {
   position: absolute;
-  width: 150px;
-  height: 150px;
-  background: rgba(0,255,255,0.1);
-  border: 1px solid cyan;
+  width: 200%;
+  height: 200%;
+  background-image: linear-gradient(#0ff 1px, transparent 1px),
+                    linear-gradient(90deg, #0ff 1px, transparent 1px);
+  background-size: 50px 50px;
+  transform: perspective(500px) rotateX(60deg);
+  animation: wave 5s infinite linear;
 }
 
-.front  { transform: translateZ(75px); }
-.back   { transform: rotateY(180deg) translateZ(75px); }
-.left   { transform: rotateY(-90deg) translateZ(75px); }
-.right  { transform: rotateY(90deg) translateZ(75px); }
-.top    { transform: rotateX(90deg) translateZ(75px); }
-.bottom { transform: rotateX(-90deg) translateZ(75px); }
-
-@keyframes rotate {
-  from { transform: rotateX(0) rotateY(0); }
-  to   { transform: rotateX(360deg) rotateY(360deg); }
+@keyframes wave {
+  0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+  50% { transform: perspective(500px) rotateX(60deg) translateY(-50px); }
+  100% { transform: perspective(500px) rotateX(60deg) translateY(0); }
 }
 </style>
 </head>
 <body>
-
-<div class="cube">
-  <div class="face front"></div>
-  <div class="face back"></div>
-  <div class="face left"></div>
-  <div class="face right"></div>
-  <div class="face top"></div>
-  <div class="face bottom"></div>
-</div>
-
+<div class="grid"></div>
 </body>
 </html>
