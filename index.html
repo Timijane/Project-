@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Triangle Tech Login</title>
+<title>Triangle Tech Professional Login</title>
 <style>
 body {
   margin: 0;
   overflow: hidden;
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #f0f8ff, #ffe4f0);
+  background: linear-gradient(135deg, #e0f7ff, #ffe4f0);
 }
 
 canvas { display: block; }
@@ -17,50 +17,61 @@ canvas { display: block; }
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 320px;
-  padding: 30px;
-  background: rgba(255,255,255,0.9);
+  width: 340px;
+  padding: 35px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(12px);
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-  transform: translate(-50%, -50%);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.15);
   display: flex;
   flex-direction: column;
   align-items: center;
   opacity: 0;
+  transform: translate(-50%, -50%) scale(0.95);
+  border: 1px solid rgba(255,255,255,0.3);
 }
 
 .login-container h2 {
-  margin: 0 0 15px;
-  color: #333;
+  margin: 0 0 18px;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 
 .login-container input {
   width: 100%;
-  padding: 10px 15px;
+  padding: 12px 18px;
   margin: 10px 0;
-  border-radius: 12px;
-  border: 1px solid #ccc;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.4);
   outline: none;
   font-size: 16px;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+.login-container input::placeholder {
+  color: rgba(255,255,255,0.7);
 }
 
 .login-container button {
-  padding: 10px 20px;
+  padding: 12px 25px;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   background: linear-gradient(90deg, #ff7f50, #1e90ff);
   color: white;
   font-weight: bold;
   cursor: pointer;
-  margin-top: 15px;
+  margin-top: 18px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
 }
 
 .brand {
   position: absolute;
-  bottom: 20px;
+  bottom: 18px;
   left: 20px;
   font-size: 14px;
-  color: #444;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25);
 }
 
 .ceo {
@@ -81,92 +92,106 @@ canvas { display: block; }
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
 
 <script>
-// Scene setup
+// Scene
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
-camera.position.z = 10;
 
+// Camera
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 100);
+camera.position.set(0,1,12);
+
+// Renderer
 const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
 renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-// Particles background
+// Particle background
 const particleGeo = new THREE.BufferGeometry();
-const particleCount = 500;
+const particleCount = 600;
 const positions = [];
 for(let i=0;i<particleCount;i++){
   positions.push((Math.random()-0.5)*40);
   positions.push((Math.random()-0.5)*30);
-  positions.push((Math.random()-0.5)*20);
+  positions.push((Math.random()-0.5)*25);
 }
 particleGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions,3));
-const particleMat = new THREE.PointsMaterial({color:0xffffff, size:0.15});
+const particleMat = new THREE.PointsMaterial({color:0xffffff, size:0.15, transparent:true, opacity:0.8});
 const particles = new THREE.Points(particleGeo, particleMat);
 scene.add(particles);
 
-// Character (circle for simplicity)
-const charGeo = new THREE.CircleGeometry(1, 32);
-const charMat = new THREE.MeshBasicMaterial({color:0xff69b4});
-const character = new THREE.Mesh(charGeo, charMat);
-character.position.x = -15; // start offscreen left
-character.position.y = 0;
+// Lights
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0x88ccff,1.5);
+pointLight.position.set(5,5,10);
+scene.add(pointLight);
+
+// Character placeholder (3D capsule style)
+const charGeo = new THREE.CapsuleGeometry(0.7,1.6,8,16);
+const charMat = new THREE.MeshStandardMaterial({color:0xff69b4, metalness:0.3, roughness:0.4});
+const character = new THREE.Mesh(charGeo,charMat);
+character.position.x = -15; // start offscreen
+character.position.y = -0.5;
 scene.add(character);
 
-// GSAP timeline
+// Login panel element
 const loginBox = document.getElementById('login');
 
+// GSAP timeline for entrance
 const timeline = gsap.timeline({paused:true});
 timeline.to(character.position, {
-  x: -3, // approach login
-  duration: 2,
+  x: -3,
+  duration: 2.2,
   ease: "power2.out"
 });
 timeline.to(loginBox, {
-  opacity: 1,
+  opacity:1,
   duration: 1,
-  ease: "power2.inOut"
-}, "-=0.5");
-timeline.to(character.position, {
-  x: -2,
-  duration: 0.5,
-  ease: "elastic.out(1,0.5)"
+  ease: "power2.inOut",
+  scale:1
+}, "-=1.2");
+timeline.to(character.position,{
+  x:-2,
+  duration:0.7,
+  ease:"elastic.out(1,0.5)"
 });
 
-// Drag interaction
+// Drag-pull interaction
 let isDragging = false;
-let dragOffset = 0;
-
-renderer.domElement.addEventListener('mousedown', ()=>{
-  isDragging = true;
-});
-renderer.domElement.addEventListener('mouseup', ()=>{
-  isDragging = false;
-  timeline.play();
-});
+renderer.domElement.addEventListener('mousedown', ()=>{isDragging=true;});
+renderer.domElement.addEventListener('mouseup', ()=>{isDragging=false; timeline.play();});
 renderer.domElement.addEventListener('mousemove', e=>{
   if(isDragging){
-    const x = (e.clientX/innerWidth - 0.5) * 30;
+    const x = (e.clientX/innerWidth - 0.5) * 25;
     character.position.x = x;
   }
 });
 
-// Animate particles
+// Animate
 function animate(){
   requestAnimationFrame(animate);
-  particles.rotation.y += 0.0008;
+
+  // Particles slight rotation
+  particles.rotation.y += 0.0007;
+
+  // Character subtle breathing
+  character.position.y = -0.5 + Math.sin(Date.now()*0.002)*0.1;
+  character.rotation.y += 0.001;
+
   renderer.render(scene,camera);
 }
 animate();
 
 // Resize
-window.addEventListener("resize", ()=>{
+window.addEventListener("resize",()=>{
   camera.aspect = innerWidth/innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
 });
 </script>
-
 </body>
 </html>
