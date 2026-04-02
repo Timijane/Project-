@@ -1,171 +1,622 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Triangle Tech Login</title>
-<style>
-body {
-  margin: 0;
-  overflow: hidden;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #f0f8ff, #ffe4f0);
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Lumina Access — Cinematic Login</title>
+    <!-- Google Fonts + subtle reset -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* avoid accidental text selection while dragging */
+        }
 
-#human {
-  position: absolute;
-  top: 30%;
-  left: -200px; /* start offscreen */
-  width: 150px;
-  cursor: grab;
-  transition: transform 0.2s ease;
-  z-index: 10;
-}
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #0b1120, #03050b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            cursor: default;
+        }
 
-#loginPanel {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 340px;
-  padding: 35px;
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(12px);
-  border-radius: 20px;
-  box-shadow: 0 15px 50px rgba(0,0,0,0.15);
-  transform: translate(-50%, -50%) scale(0.95);
-  opacity: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+        /* main canvas container */
+        .stage {
+            position: relative;
+            width: 1200px;
+            max-width: 92vw;
+            height: 700px;
+            max-height: 85vh;
+            background: rgba(15, 25, 45, 0.45);
+            backdrop-filter: blur(2px);
+            border-radius: 3rem;
+            box-shadow: 0 30px 45px -20px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05);
+            overflow: hidden;
+            border: 1px solid rgba(90, 150, 255, 0.2);
+        }
 
-#loginPanel h2 {
-  margin-bottom: 18px;
-  color: #fff;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.25);
-}
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            cursor: grab;
+        }
+        
+        canvas:active {
+            cursor: grabbing;
+        }
 
-#loginPanel input {
-  width: 100%;
-  padding: 12px 18px;
-  margin: 10px 0;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.4);
-  outline: none;
-  font-size: 16px;
-  background: rgba(255,255,255,0.2);
-  color: #fff;
-}
-
-#loginPanel input::placeholder {
-  color: rgba(255,255,255,0.7);
-}
-
-#loginPanel button {
-  padding: 12px 25px;
-  border: none;
-  border-radius: 14px;
-  background: linear-gradient(90deg, #ff7f50, #1e90ff);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 18px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-}
-
-.brand {
-  position: absolute;
-  bottom: 18px;
-  left: 20px;
-  font-size: 14px;
-  color: #fff;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.25);
-}
-.ceo {
-  font-weight: bold;
-}
-</style>
+        /* tiny credit / brand — built by TRIANGLE TECH */
+        .credit {
+            position: fixed;
+            bottom: 18px;
+            right: 24px;
+            font-size: 12px;
+            font-weight: 400;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 60px;
+            color: #b4ccff;
+            letter-spacing: 0.3px;
+            font-family: monospace;
+            border-left: 2px solid #4c9aff;
+            pointer-events: none;
+            z-index: 200;
+            font-weight: 500;
+        }
+        .credit strong {
+            color: #9bc0ff;
+            font-weight: 600;
+        }
+        
+        /* hint UI (tiny glow) */
+        .drag-hint {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #cddfff;
+            pointer-events: none;
+            font-family: 'Inter', monospace;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(90, 170, 255, 0.4);
+            z-index: 200;
+            white-space: nowrap;
+        }
+        
+        @media (max-width: 700px) {
+            .drag-hint { font-size: 10px; bottom: 18px; white-space: nowrap; }
+            .credit { font-size: 9px; bottom: 12px; right: 12px; }
+        }
+    </style>
 </head>
 <body>
-
-<!-- Human image -->
-<img id="human" src="https://i.imgur.com/TzWcihb.png" alt="Human Illustration">
-
-<!-- Login panel -->
-<div id="loginPanel">
-  <h2>Triangle Tech</h2>
-  <input type="text" placeholder="Username">
-  <input type="password" placeholder="Password">
-  <button>Login</button>
+<div class="stage">
+    <canvas id="loginCanvas" width="1200" height="700"></canvas>
+</div>
+<div class="drag-hint">
+    ✨ DRAG THE FIGURE → pull the login interface ✨
+</div>
+<div class="credit">
+    built by <strong>TRIANGLE TECH</strong> — okewunmi Timileyin
 </div>
 
-<div class="brand">© Triangle Tech - <span class="ceo">Okewunmi Timileyin, CEO</span></div>
-
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-
 <script>
-const human = document.getElementById('human');
-const loginPanel = document.getElementById('loginPanel');
-
-let isDragging = false;
-let offsetX = 0;
-
-// Show login panel smoothly after human starts dragging
-function revealPanel() {
-  if (loginPanel.style.opacity == 0) {
-    gsap.to(loginPanel, {opacity: 1, scale: 1, duration: 1, ease: "power2.out"});
-  }
-}
-
-// Mouse/touch events
-human.addEventListener('mousedown', (e)=>{
-  isDragging = true;
-  offsetX = e.clientX - human.getBoundingClientRect().left;
-  human.style.cursor = 'grabbing';
-});
-
-document.addEventListener('mouseup', ()=>{
-  if (isDragging) {
-    isDragging = false;
-    human.style.cursor = 'grab';
-    // Snap human to final position & pull panel
-    gsap.to(human, {x: window.innerWidth/2 - 100, duration: 0.8, ease:"elastic.out(1,0.5)"});
-    gsap.to(loginPanel, {x: window.innerWidth/2 - window.innerWidth/2, duration:0.8, ease:"elastic.out(1,0.5)"});
-  }
-});
-
-document.addEventListener('mousemove', (e)=>{
-  if (isDragging) {
-    let x = e.clientX - offsetX;
-    human.style.left = x + 'px';
-    revealPanel();
-  }
-});
-
-// Optional: touch events for mobile
-human.addEventListener('touchstart', (e)=>{
-  isDragging = true;
-  offsetX = e.touches[0].clientX - human.getBoundingClientRect().left;
-});
-
-document.addEventListener('touchend', ()=>{
-  if (isDragging) {
-    isDragging = false;
-    gsap.to(human, {x: window.innerWidth/2 - 100, duration: 0.8, ease:"elastic.out(1,0.5)"});
-    gsap.to(loginPanel, {x: window.innerWidth/2 - window.innerWidth/2, duration:0.8, ease:"elastic.out(1,0.5)"});
-  }
-});
-
-document.addEventListener('touchmove', (e)=>{
-  if (isDragging) {
-    let x = e.touches[0].clientX - offsetX;
-    human.style.left = x + 'px';
-    revealPanel();
-  }
-});
-
-// Animate slight bounce of human while idle
-gsap.to(human, {y: "-=10", duration:1.2, repeat:-1, yoyo:true, ease:"sine.inOut"});
+    (function() {
+        // ---------- CANVAS SETUP ----------
+        const canvas = document.getElementById('loginCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width = 1200, height = 700;
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            width = rect.width;
+            height = rect.height;
+            canvas.width = width;
+            canvas.height = height;
+            drawEverything(); // redraw on resize
+        }
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            updateDragLimits();
+        });
+        resizeCanvas();
+        
+        // ---------- ANIMATION STATE ----------
+        // The animation simulates:
+        // - A character (human silhouette) that can be dragged horizontally.
+        // - Login panel starts offscreen-left (x = -280) and moves linked to drag progress.
+        // - When drag crosses threshold (center area), panel smoothly locks to center,
+        //   and character stabilizes, then rests beside the panel (character moves to right side).
+        // - All physics: spring stabilization + final "rest" pose.
+        
+        // ---- Drag logic ----
+        let isDragging = false;
+        let dragStartX = 0;
+        let currentDragX = 0;      // raw drag X (relative to canvas start)
+        
+        // ---- Character position (x coordinate, center of character base) ----
+        let characterX = 120;       // initial left side position (px)
+        
+        // ---- Login Panel position (x offset, 0 = fully centered) ----
+        let panelOffsetX = -320;     // start offscreen left (panel width ~300px)
+        
+        // ---- target values for smooth animation (spring) ----
+        let targetCharacterX = 120;
+        let targetPanelOffsetX = -320;
+        
+        // ---- Drag mapping: how far character moves the panel ----
+        // panel moves proportionally to character drag until threshold reached
+        let dragProgress = 0;        // 0..1 (0: start, 1: threshold reached)
+        
+        // ---- Animation flags & stabilization ----
+        let isStable = false;         // once panel is locked center, character goes to rest position
+        let restAnimationTimer = null;
+        let finalCharacterTarget = 120;
+        
+        // ---- Threshold: when characterX passes this point (relative to center area), panel locks ----
+        let thresholdX = width * 0.5 - 40;   // dynamic, around middle
+        
+        // ---- spring physics parameters (smooth follow) ----
+        let currentCharacterVel = 0;
+        let currentPanelVel = 0;
+        const SPRING_STRENGTH = 0.22;
+        const DAMPING = 0.78;
+        
+        // ---- additional resting "companion" offset after stabilization ----
+        let restShift = 0;           // 0 → 1 during rest settle (character moves to right of panel)
+        let isRestingPhase = false;
+        
+        // ---- update drag limits on resize ----
+        function updateDragLimits() {
+            thresholdX = width * 0.5 - 30;
+            // if not locked and character out of bounds, readjust targets
+            if (!isStable) {
+                targetCharacterX = Math.min(Math.max(targetCharacterX, 70), width - 110);
+            } else {
+                // if already stable, keep final position logic
+                if (isRestingPhase) {
+                    let finalRestX = width * 0.5 + 110;
+                    targetCharacterX = finalRestX;
+                    characterX = finalRestX;
+                } else {
+                    let besideX = width * 0.5 + 100;
+                    targetCharacterX = besideX;
+                    characterX = besideX;
+                }
+            }
+            drawEverything();
+        }
+        
+        // ---- reset to initial state (left side, panel hidden) ----
+        function resetToInitial() {
+            isDragging = false;
+            isStable = false;
+            isRestingPhase = false;
+            restShift = 0;
+            // reset positions
+            characterX = 120;
+            targetCharacterX = 120;
+            panelOffsetX = -320;
+            targetPanelOffsetX = -320;
+            dragProgress = 0;
+            currentCharacterVel = 0;
+            currentPanelVel = 0;
+            if (restAnimationTimer) clearTimeout(restAnimationTimer);
+            drawEverything();
+        }
+        
+        // ---- finish sequence: panel locked in center, character moves beside it & rests ----
+        function activateStableLogin() {
+            if (isStable) return;
+            isStable = true;
+            // Panel should be exactly centered: target offset = (width/2 - panelWidth/2)
+            let panelWidth = 300;
+            let idealPanelX = (width / 2) - (panelWidth / 2);
+            targetPanelOffsetX = idealPanelX;
+            // Character final position: beside the panel (right side) leaning/resting
+            let finalCharacterPos = (width / 2) + (panelWidth / 2) + 35;
+            finalCharacterTarget = Math.min(finalCharacterPos, width - 70);
+            targetCharacterX = finalCharacterTarget;
+            
+            // enable resting phase micro-motion: slight settling + companion rest
+            isRestingPhase = true;
+            restShift = 0;
+            // subtle rest animation (a tiny bounce / settle)
+            let restStep = 0;
+            function restSettle() {
+                if (!isRestingPhase) return;
+                restShift = Math.min(restShift + 0.12, 1);
+                drawEverything();
+                if (restShift < 1) requestAnimationFrame(restSettle);
+                else {
+                    // final tiny idle animation? just ensures smoothness
+                    drawEverything();
+                }
+            }
+            requestAnimationFrame(restSettle);
+        }
+        
+        // ---- map drag distance to panel & character motion (progressive pull) ----
+        function updateDragProgress(rawDragX) {
+            if (isStable) return; // once stable, no more dragging effect
+            
+            // clamp drag area from left anchor (character initial X ~120) to thresholdX+40
+            let minDragX = 80;
+            let maxDragX = thresholdX + 40;
+            let clampedDrag = Math.min(Math.max(rawDragX, minDragX), maxDragX);
+            
+            // compute progress 0->1 between startX (110) and thresholdX+10
+            let startBound = 110;
+            let endBound = thresholdX;
+            let prog = (clampedDrag - startBound) / (endBound - startBound);
+            prog = Math.min(Math.max(prog, 0), 1);
+            dragProgress = prog;
+            
+            // Panel moves from -320 (offscreen) to center (depending on width)
+            let panelStartOffset = -320;
+            let panelEndOffset = (width / 2) - 150;   // 150 = half of panel width (300/2)
+            let newPanelOffset = panelStartOffset + (panelEndOffset - panelStartOffset) * dragProgress;
+            targetPanelOffsetX = newPanelOffset;
+            
+            // Character moves linearly with drag
+            let charStart = 120;
+            let charEnd = thresholdX + 5;
+            let newCharX = charStart + (charEnd - charStart) * dragProgress;
+            targetCharacterX = newCharX;
+            
+            // if progress reaches 1 (threshold reached) -> lock panel & finalize
+            if (dragProgress >= 0.99 && !isStable) {
+                activateStableLogin();
+            }
+        }
+        
+        // ---- MOUSE / TOUCH drag handling ----
+        function getCanvasCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            let clientX;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+            } else {
+                clientX = e.clientX;
+            }
+            let canvasX = (clientX - rect.left) * scaleX;
+            return Math.min(Math.max(canvasX, 0), canvas.width);
+        }
+        
+        function onPointerStart(e) {
+            e.preventDefault();
+            if (isStable) return;   // after login revealed, no more dragging (interaction via form)
+            isDragging = true;
+            const startCoord = getCanvasCoords(e);
+            dragStartX = startCoord;
+            currentDragX = characterX;
+            canvas.style.cursor = 'grabbing';
+        }
+        
+        function onPointerMove(e) {
+            if (!isDragging || isStable) return;
+            e.preventDefault();
+            const currentCoord = getCanvasCoords(e);
+            let delta = currentCoord - dragStartX;
+            let newDragX = currentDragX + delta;
+            // restrict character movement range (left bound ~70, right bound just before threshold+)
+            let maxAllowed = Math.min(thresholdX + 30, width - 80);
+            newDragX = Math.min(Math.max(newDragX, 65), maxAllowed);
+            updateDragProgress(newDragX);
+            drawEverything();
+        }
+        
+        function onPointerEnd(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            canvas.style.cursor = 'grab';
+            // if not stable yet and drag didn't reach threshold, snap back to original left state
+            if (!isStable) {
+                // spring back to initial (character left, panel hidden)
+                targetCharacterX = 120;
+                targetPanelOffsetX = -320;
+                dragProgress = 0;
+            }
+            drawEverything();
+        }
+        
+        // attach events
+        canvas.addEventListener('mousedown', onPointerStart);
+        window.addEventListener('mousemove', onPointerMove);
+        window.addEventListener('mouseup', onPointerEnd);
+        canvas.addEventListener('touchstart', onPointerStart, {passive: false});
+        window.addEventListener('touchmove', onPointerMove, {passive: false});
+        window.addEventListener('touchend', onPointerEnd);
+        canvas.style.cursor = 'grab';
+        
+        // ---------- SPRING PHYSICS LOOP (smooth following) ----------
+        function springUpdate() {
+            // apply spring to characterX
+            let dxChar = targetCharacterX - characterX;
+            currentCharacterVel = currentCharacterVel * DAMPING + dxChar * SPRING_STRENGTH;
+            characterX += currentCharacterVel;
+            
+            // apply spring to panelOffsetX
+            let dxPanel = targetPanelOffsetX - panelOffsetX;
+            currentPanelVel = currentPanelVel * DAMPING + dxPanel * SPRING_STRENGTH;
+            panelOffsetX += currentPanelVel;
+            
+            // minor boundary cleanup
+            characterX = Math.min(Math.max(characterX, 50), width - 60);
+            
+            drawEverything();
+            requestAnimationFrame(springUpdate);
+        }
+        
+        // ---------- DRAW EVERYTHING (Artistic + character + login card) ----------
+        function drawEverything() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, width, height);
+            
+            // 1. deep gradient background (artistic)
+            const grad = ctx.createLinearGradient(0, 0, width*0.8, height);
+            grad.addColorStop(0, '#0a0f1f');
+            grad.addColorStop(1, '#11182c');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, height);
+            
+            // 2. subtle grid / aura
+            ctx.save();
+            ctx.globalAlpha = 0.3;
+            ctx.beginPath();
+            for (let i = 0; i < width; i += 45) {
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, height);
+                ctx.strokeStyle = '#2d4f9a';
+                ctx.lineWidth = 0.4;
+                ctx.stroke();
+                ctx.moveTo(0, i % height);
+                ctx.lineTo(width, i % height);
+                ctx.stroke();
+            }
+            ctx.restore();
+            
+            // 3. glowing orbs (artistic)
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(width-70, 100, 45, 0, Math.PI*2);
+            ctx.fillStyle = '#2b4b9e20';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(80, height-90, 70, 0, Math.PI*2);
+            ctx.fillStyle = '#2f5baa20';
+            ctx.fill();
+            
+            // ---------- 4. LOGIN PANEL (dragging from left) ----------
+            const panelWidth = 300;
+            const panelHeight = 380;
+            let panelX = panelOffsetX;
+            let panelY = height/2 - panelHeight/2;
+            
+            // Glassmorphic panel effect
+            ctx.save();
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 20;
+            ctx.fillStyle = 'rgba(20, 30, 55, 0.65)';
+            ctx.roundRect(panelX, panelY, panelWidth, panelHeight, 28);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = 'rgba(100, 170, 255, 0.5)';
+            ctx.lineWidth = 1.5;
+            ctx.roundRect(panelX, panelY, panelWidth, panelHeight, 28);
+            ctx.stroke();
+            
+            // inner glow
+            ctx.roundRect(panelX+4, panelY+4, panelWidth-8, panelHeight-8, 24);
+            ctx.strokeStyle = 'rgba(210, 230, 255, 0.2)';
+            ctx.stroke();
+            
+            // ----- Login Form Content -----
+            ctx.font = `500 28px 'Inter', sans-serif`;
+            ctx.fillStyle = '#f0f3ff';
+            ctx.shadowBlur = 0;
+            ctx.fillText("WELCOME", panelX + 40, panelY + 60);
+            ctx.font = `400 14px 'Inter'`;
+            ctx.fillStyle = '#aac4ff';
+            ctx.fillText("access your creative universe", panelX + 40, panelY + 92);
+            
+            // email field
+            ctx.fillStyle = 'rgba(255,255,255,0.12)';
+            ctx.roundRect(panelX+30, panelY+130, 240, 44, 14);
+            ctx.fill();
+            ctx.fillStyle = '#cad6ff';
+            ctx.font = `400 13px 'Inter'`;
+            ctx.fillText("EMAIL", panelX+42, panelY+156);
+            ctx.font = `500 14px monospace`;
+            ctx.fillStyle = '#ffffffcc';
+            ctx.fillText("hello@lumina.space", panelX+42, panelY+176);
+            
+            // password field
+            ctx.fillStyle = 'rgba(255,255,255,0.12)';
+            ctx.roundRect(panelX+30, panelY+200, 240, 44, 14);
+            ctx.fill();
+            ctx.fillStyle = '#cad6ff';
+            ctx.font = `400 13px 'Inter'`;
+            ctx.fillText("PASSWORD", panelX+42, panelY+226);
+            ctx.fillStyle = '#ffffffaa';
+            ctx.fillText("••••••••", panelX+42, panelY+246);
+            
+            // sign in button
+            ctx.fillStyle = '#3d7eff';
+            ctx.roundRect(panelX+30, panelY+280, 240, 48, 30);
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = `600 16px 'Inter'`;
+            ctx.fillText("→ SIGN IN", panelX+100, panelY+312);
+            
+            ctx.font = `400 11px monospace`;
+            ctx.fillStyle = '#8da2dd';
+            ctx.fillText("secure access • biometric ready", panelX+70, panelY+355);
+            
+            // subtle corner triangle tech accent
+            ctx.beginPath();
+            ctx.moveTo(panelX+panelWidth-20, panelY+15);
+            ctx.lineTo(panelX+panelWidth-8, panelY+15);
+            ctx.lineTo(panelX+panelWidth-8, panelY+27);
+            ctx.fillStyle = '#4c9eff';
+            ctx.fill();
+            
+            // ---------- 5. HUMAN FIGURE (artistic silhouette + drag gesture) ----------
+            // draw character with dynamic pose based on drag progress / rest phase
+            let characterBaseX = characterX;
+            let characterBaseY = height/2 + 20;
+            let armAngle = 0;
+            let headBob = 0;
+            let restLean = 0;
+            
+            if (isRestingPhase) {
+                // resting beside login panel: slight lean, relaxed arm
+                restLean = Math.sin(Date.now() * 0.003) * 0.03;
+                armAngle = -0.2 + Math.sin(Date.now() * 0.004) * 0.1;
+                headBob = Math.sin(Date.now() * 0.005) * 2;
+            } else if (isDragging) {
+                // active pull motion: dynamic arm forward
+                armAngle = 0.7 + dragProgress * 0.8;
+                headBob = dragProgress * 6;
+            } else {
+                armAngle = 0.2;
+                headBob = 0;
+            }
+            
+            ctx.save();
+            ctx.shadowBlur = 0;
+            // glowing silhouette
+            ctx.shadowColor = '#6da5ff40';
+            ctx.shadowBlur = 14;
+            // draw elegant human figure (abstract but expressive)
+            ctx.beginPath();
+            // head
+            let headX = characterBaseX;
+            let headY = characterBaseY - 48 + headBob * 0.5;
+            ctx.arc(headX, headY, 18, 0, Math.PI*2);
+            ctx.fillStyle = '#bcd0ff';
+            ctx.fill();
+            ctx.fillStyle = '#8aa9f0';
+            ctx.beginPath();
+            ctx.arc(headX-5, headY-4, 2.5, 0, Math.PI*2);
+            ctx.arc(headX+5, headY-4, 2.2, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(headX, headY+4, 5, 0, Math.PI);
+            ctx.fillStyle = '#f4a2b6';
+            ctx.fill();
+            
+            // body (elegant cape / suit)
+            ctx.beginPath();
+            ctx.moveTo(characterBaseX-15, characterBaseY-28);
+            ctx.lineTo(characterBaseX, characterBaseY+20);
+            ctx.lineTo(characterBaseX+15, characterBaseY-28);
+            ctx.fillStyle = '#97b5f0cc';
+            ctx.fill();
+            ctx.fillStyle = '#ffffffcc';
+            ctx.beginPath();
+            ctx.moveTo(characterBaseX-8, characterBaseY-12);
+            ctx.lineTo(characterBaseX, characterBaseY+8);
+            ctx.lineTo(characterBaseX+8, characterBaseY-12);
+            ctx.fill();
+            
+            // dynamic arm (dragging motion)
+            ctx.beginPath();
+            let armX = characterBaseX + 22 + (isDragging ? dragProgress*12 : 0);
+            let armY = characterBaseY - 18;
+            ctx.moveTo(characterBaseX+12, characterBaseY-22);
+            ctx.lineTo(armX, armY + (armAngle*6));
+            ctx.lineWidth = 9;
+            ctx.strokeStyle = '#b7ceff';
+            ctx.stroke();
+            
+            // second arm resting
+            ctx.beginPath();
+            ctx.moveTo(characterBaseX-12, characterBaseY-22);
+            ctx.lineTo(characterBaseX-22, characterBaseY-12);
+            ctx.stroke();
+            
+            // "dragging" energy lines when pulling
+            if (isDragging && dragProgress < 0.9 && !isStable) {
+                for (let i=0; i<3; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(characterBaseX+28, characterBaseY-18);
+                    ctx.lineTo(characterBaseX+45 + i*6, characterBaseY-22 + i*4);
+                    ctx.strokeStyle = `rgba(100, 180, 255, ${0.7 - dragProgress*0.5})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            }
+            
+            // if stable/resting: add little "companion" heart/star above
+            if (isRestingPhase) {
+                ctx.font = "18px monospace";
+                ctx.fillStyle = '#ffbc6e';
+                ctx.shadowBlur = 8;
+                ctx.fillText("✦", characterBaseX+8, characterBaseY-48);
+                ctx.fillStyle = '#ff94cc';
+                ctx.fillText("❤", characterBaseX-12, characterBaseY-52);
+            }
+            
+            ctx.restore();
+            
+            // 6. final artistic floating particles (cinematic)
+            ctx.fillStyle = '#ffffff60';
+            for (let i=0; i<12; i++) {
+                let t = Date.now() * 0.002 + i;
+                let px = (Math.sin(t) * 10 + width * 0.8 + i*33) % width;
+                let py = (Math.cos(t*1.3) * 12 + height*0.2 + i*41) % height;
+                ctx.beginPath();
+                ctx.arc(px, py, 2, 0, Math.PI*2);
+                ctx.fill();
+            }
+        }
+        
+        // helper: canvas roundRect
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (w < 2 * r) r = w / 2;
+                if (h < 2 * r) r = h / 2;
+                this.moveTo(x+r, y);
+                this.lineTo(x+w-r, y);
+                this.quadraticCurveTo(x+w, y, x+w, y+r);
+                this.lineTo(x+w, y+h-r);
+                this.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+                this.lineTo(x+r, y+h);
+                this.quadraticCurveTo(x, y+h, x, y+h-r);
+                this.lineTo(x, y+r);
+                this.quadraticCurveTo(x, y, x+r, y);
+                return this;
+            };
+        }
+        
+        // initial draw and start spring loop
+        resizeCanvas();
+        springUpdate();
+        // add idle animation loop for resting subtlety
+        function gentleIdle() {
+            if (isRestingPhase || !isStable) drawEverything();
+            requestAnimationFrame(gentleIdle);
+        }
+        gentleIdle();
+    })();
 </script>
-
 </body>
 </html>
