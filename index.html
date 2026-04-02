@@ -2,216 +2,169 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Triangle Tech</title>
-
+<title>Triangle Tech Login</title>
 <style>
 body {
   margin: 0;
   overflow: hidden;
-  background: #ffffff;
-  font-family: -apple-system, sans-serif;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f0f8ff, #ffe4f0);
 }
 
-.hero {
+canvas { display: block; }
+
+.login-container {
   position: absolute;
-  left: 8%;
   top: 50%;
-  transform: translateY(-50%);
+  left: 50%;
+  width: 320px;
+  padding: 30px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
 }
 
-.hero h1 {
-  font-size: 58px;
-  margin: 0;
-  color: #111;
+.login-container h2 {
+  margin: 0 0 15px;
+  color: #333;
 }
 
-.hero p {
-  color: #666;
-  margin-top: 8px;
+.login-container input {
+  width: 100%;
+  padding: 10px 15px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 16px;
+}
+
+.login-container button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #ff7f50, #1e90ff);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
 }
 
 .brand {
   position: absolute;
   bottom: 20px;
-  left: 8%;
+  left: 20px;
   font-size: 14px;
   color: #444;
 }
 
-button {
-  margin-top: 15px;
-  margin-right: 10px;
-  padding: 10px 18px;
-  border: none;
-  background: #111;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
+.ceo {
+  font-weight: bold;
 }
 </style>
 </head>
-
 <body>
 
-<div class="hero">
-  <h1>Triangle Tech</h1>
-  <p>Your number one programming company</p>
-  <button onclick="downloadImage()">Download Image</button>
-  <button onclick="toggleRecording()">Record Video</button>
+<div class="login-container" id="login">
+  <h2>Triangle Tech</h2>
+  <input type="text" placeholder="Username">
+  <input type="password" placeholder="Password">
+  <button>Login</button>
 </div>
 
-<div class="brand">© Triangle Tech</div>
+<div class="brand">© Triangle Tech - <span class="ceo">Okewunmi Timileyin, CEO</span></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 
 <script>
-// Scene
+// Scene setup
 const scene = new THREE.Scene();
-
-// Camera
 const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
-camera.position.z = 6;
+camera.position.z = 10;
 
-// Renderer (important for recording)
-const renderer = new THREE.WebGLRenderer({ antialias:true, preserveDrawingBuffer:true });
+const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
 renderer.setSize(innerWidth, innerHeight);
-renderer.setClearColor(0xffffff);
 document.body.appendChild(renderer.domElement);
 
-// Lights
-scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-
-const light = new THREE.PointLight(0x88ccff, 1.5);
-light.position.set(5,5,5);
-scene.add(light);
-
-// Group
-const group = new THREE.Group();
-scene.add(group);
-
-// Artistic slices
-const slices = [];
-const total = 10;
-const radius = 2;
-
-for(let i=0;i<total;i++){
-  const start = (i/total)*Math.PI*2;
-  const end = ((i+1)/total)*Math.PI*2;
-
-  const shape = new THREE.Shape();
-  shape.moveTo(0,0);
-  shape.absarc(0,0,radius,start,end,false);
-  shape.lineTo(0,0);
-
-  const geo = new THREE.ExtrudeGeometry(shape,{
-    depth:0.35,
-    bevelEnabled:true,
-    bevelSize:0.04
-  });
-
-  const mat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(`hsl(${i*36}, 70%, 80%)`),
-    roughness:0.3,
-    metalness:0.2
-  });
-
-  const mesh = new THREE.Mesh(geo,mat);
-
-  mesh.scale.set(0.001,0.001,0.001);
-  mesh.position.z = -2;
-
-  group.add(mesh);
-  slices.push(mesh);
+// Particles background
+const particleGeo = new THREE.BufferGeometry();
+const particleCount = 500;
+const positions = [];
+for(let i=0;i<particleCount;i++){
+  positions.push((Math.random()-0.5)*40);
+  positions.push((Math.random()-0.5)*30);
+  positions.push((Math.random()-0.5)*20);
 }
+particleGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions,3));
+const particleMat = new THREE.PointsMaterial({color:0xffffff, size:0.15});
+const particles = new THREE.Points(particleGeo, particleMat);
+scene.add(particles);
 
-// Mouse interaction
-let mx=0,my=0;
-window.addEventListener("mousemove",(e)=>{
-  mx = (e.clientX/innerWidth - 0.5);
-  my = (e.clientY/innerHeight - 0.5);
+// Character (circle for simplicity)
+const charGeo = new THREE.CircleGeometry(1, 32);
+const charMat = new THREE.MeshBasicMaterial({color:0xff69b4});
+const character = new THREE.Mesh(charGeo, charMat);
+character.position.x = -15; // start offscreen left
+character.position.y = 0;
+scene.add(character);
+
+// GSAP timeline
+const loginBox = document.getElementById('login');
+
+const timeline = gsap.timeline({paused:true});
+timeline.to(character.position, {
+  x: -3, // approach login
+  duration: 2,
+  ease: "power2.out"
+});
+timeline.to(loginBox, {
+  opacity: 1,
+  duration: 1,
+  ease: "power2.inOut"
+}, "-=0.5");
+timeline.to(character.position, {
+  x: -2,
+  duration: 0.5,
+  ease: "elastic.out(1,0.5)"
 });
 
-// Animation
-let t = 0;
+// Drag interaction
+let isDragging = false;
+let dragOffset = 0;
 
+renderer.domElement.addEventListener('mousedown', ()=>{
+  isDragging = true;
+});
+renderer.domElement.addEventListener('mouseup', ()=>{
+  isDragging = false;
+  timeline.play();
+});
+renderer.domElement.addEventListener('mousemove', e=>{
+  if(isDragging){
+    const x = (e.clientX/innerWidth - 0.5) * 30;
+    character.position.x = x;
+  }
+});
+
+// Animate particles
 function animate(){
   requestAnimationFrame(animate);
-  t += 0.02;
-
-  slices.forEach((s,i)=>{
-    const delay = i * 0.15;
-    const p = Math.max(0, Math.min(1, t - delay));
-
-    s.scale.set(p,p,p);
-    s.position.z = -2 + p * 2;
-
-    // artistic breathing
-    s.rotation.z += 0.003 + Math.sin(t + i)*0.002;
-  });
-
-  // group movement
-  group.rotation.y += 0.002;
-
-  // smooth mouse effect
-  group.rotation.x += (my * 0.4 - group.rotation.x)*0.05;
-  group.rotation.y += (mx * 0.4 - group.rotation.y)*0.05;
-
+  particles.rotation.y += 0.0008;
   renderer.render(scene,camera);
 }
-
 animate();
 
-// Download image
-function downloadImage(){
-  const link = document.createElement('a');
-  link.download = 'triangle-tech.png';
-  link.href = renderer.domElement.toDataURL();
-  link.click();
-}
-
-// VIDEO RECORDING
-let mediaRecorder;
-let recordedChunks = [];
-let recording = false;
-
-function toggleRecording(){
-  if(!recording){
-    const stream = renderer.domElement.captureStream(30);
-    mediaRecorder = new MediaRecorder(stream);
-
-    recordedChunks = [];
-
-    mediaRecorder.ondataavailable = e=>{
-      if(e.data.size > 0){
-        recordedChunks.push(e.data);
-      }
-    };
-
-    mediaRecorder.onstop = ()=>{
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'triangle-tech.webm';
-      a.click();
-    };
-
-    mediaRecorder.start();
-    recording = true;
-    alert("Recording started");
-  } else {
-    mediaRecorder.stop();
-    recording = false;
-    alert("Recording saved");
-  }
-}
-
 // Resize
-window.addEventListener("resize",()=>{
-  renderer.setSize(innerWidth, innerHeight);
+window.addEventListener("resize", ()=>{
   camera.aspect = innerWidth/innerHeight;
   camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
 });
 </script>
 
