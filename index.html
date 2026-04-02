@@ -2,42 +2,49 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Triangle Tech Professional Login</title>
+<title>Triangle Tech Login</title>
 <style>
 body {
   margin: 0;
   overflow: hidden;
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #e0f7ff, #ffe4f0);
+  background: linear-gradient(135deg, #f0f8ff, #ffe4f0);
 }
 
-canvas { display: block; }
+#human {
+  position: absolute;
+  top: 30%;
+  left: -200px; /* start offscreen */
+  width: 150px;
+  cursor: grab;
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
 
-.login-container {
+#loginPanel {
   position: absolute;
   top: 50%;
   left: 50%;
   width: 340px;
   padding: 35px;
-  background: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.15);
   backdrop-filter: blur(12px);
   border-radius: 20px;
   box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+  transform: translate(-50%, -50%) scale(0.95);
+  opacity: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.95);
-  border: 1px solid rgba(255,255,255,0.3);
 }
 
-.login-container h2 {
-  margin: 0 0 18px;
-  color: #ffffff;
+#loginPanel h2 {
+  margin-bottom: 18px;
+  color: #fff;
   text-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 
-.login-container input {
+#loginPanel input {
   width: 100%;
   padding: 12px 18px;
   margin: 10px 0;
@@ -49,11 +56,11 @@ canvas { display: block; }
   color: #fff;
 }
 
-.login-container input::placeholder {
+#loginPanel input::placeholder {
   color: rgba(255,255,255,0.7);
 }
 
-.login-container button {
+#loginPanel button {
   padding: 12px 25px;
   border: none;
   border-radius: 14px;
@@ -73,7 +80,6 @@ canvas { display: block; }
   color: #fff;
   text-shadow: 0 1px 4px rgba(0,0,0,0.25);
 }
-
 .ceo {
   font-weight: bold;
 }
@@ -81,7 +87,11 @@ canvas { display: block; }
 </head>
 <body>
 
-<div class="login-container" id="login">
+<!-- Human image -->
+<img id="human" src="https://i.imgur.com/TzWcihb.png" alt="Human Illustration">
+
+<!-- Login panel -->
+<div id="loginPanel">
   <h2>Triangle Tech</h2>
   <input type="text" placeholder="Username">
   <input type="password" placeholder="Password">
@@ -90,108 +100,72 @@ canvas { display: block; }
 
 <div class="brand">© Triangle Tech - <span class="ceo">Okewunmi Timileyin, CEO</span></div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
 
 <script>
-// Scene
-const scene = new THREE.Scene();
+const human = document.getElementById('human');
+const loginPanel = document.getElementById('loginPanel');
 
-// Camera
-const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 100);
-camera.position.set(0,1,12);
-
-// Renderer
-const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
-renderer.setSize(innerWidth, innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
-document.body.appendChild(renderer.domElement);
-
-// Particle background
-const particleGeo = new THREE.BufferGeometry();
-const particleCount = 600;
-const positions = [];
-for(let i=0;i<particleCount;i++){
-  positions.push((Math.random()-0.5)*40);
-  positions.push((Math.random()-0.5)*30);
-  positions.push((Math.random()-0.5)*25);
-}
-particleGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions,3));
-const particleMat = new THREE.PointsMaterial({color:0xffffff, size:0.15, transparent:true, opacity:0.8});
-const particles = new THREE.Points(particleGeo, particleMat);
-scene.add(particles);
-
-// Lights
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-scene.add(ambientLight);
-
-const pointLight = new THREE.PointLight(0x88ccff,1.5);
-pointLight.position.set(5,5,10);
-scene.add(pointLight);
-
-// Character placeholder (3D capsule style)
-const charGeo = new THREE.CapsuleGeometry(0.7,1.6,8,16);
-const charMat = new THREE.MeshStandardMaterial({color:0xff69b4, metalness:0.3, roughness:0.4});
-const character = new THREE.Mesh(charGeo,charMat);
-character.position.x = -15; // start offscreen
-character.position.y = -0.5;
-scene.add(character);
-
-// Login panel element
-const loginBox = document.getElementById('login');
-
-// GSAP timeline for entrance
-const timeline = gsap.timeline({paused:true});
-timeline.to(character.position, {
-  x: -3,
-  duration: 2.2,
-  ease: "power2.out"
-});
-timeline.to(loginBox, {
-  opacity:1,
-  duration: 1,
-  ease: "power2.inOut",
-  scale:1
-}, "-=1.2");
-timeline.to(character.position,{
-  x:-2,
-  duration:0.7,
-  ease:"elastic.out(1,0.5)"
-});
-
-// Drag-pull interaction
 let isDragging = false;
-renderer.domElement.addEventListener('mousedown', ()=>{isDragging=true;});
-renderer.domElement.addEventListener('mouseup', ()=>{isDragging=false; timeline.play();});
-renderer.domElement.addEventListener('mousemove', e=>{
-  if(isDragging){
-    const x = (e.clientX/innerWidth - 0.5) * 25;
-    character.position.x = x;
+let offsetX = 0;
+
+// Show login panel smoothly after human starts dragging
+function revealPanel() {
+  if (loginPanel.style.opacity == 0) {
+    gsap.to(loginPanel, {opacity: 1, scale: 1, duration: 1, ease: "power2.out"});
+  }
+}
+
+// Mouse/touch events
+human.addEventListener('mousedown', (e)=>{
+  isDragging = true;
+  offsetX = e.clientX - human.getBoundingClientRect().left;
+  human.style.cursor = 'grabbing';
+});
+
+document.addEventListener('mouseup', ()=>{
+  if (isDragging) {
+    isDragging = false;
+    human.style.cursor = 'grab';
+    // Snap human to final position & pull panel
+    gsap.to(human, {x: window.innerWidth/2 - 100, duration: 0.8, ease:"elastic.out(1,0.5)"});
+    gsap.to(loginPanel, {x: window.innerWidth/2 - window.innerWidth/2, duration:0.8, ease:"elastic.out(1,0.5)"});
   }
 });
 
-// Animate
-function animate(){
-  requestAnimationFrame(animate);
-
-  // Particles slight rotation
-  particles.rotation.y += 0.0007;
-
-  // Character subtle breathing
-  character.position.y = -0.5 + Math.sin(Date.now()*0.002)*0.1;
-  character.rotation.y += 0.001;
-
-  renderer.render(scene,camera);
-}
-animate();
-
-// Resize
-window.addEventListener("resize",()=>{
-  camera.aspect = innerWidth/innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
+document.addEventListener('mousemove', (e)=>{
+  if (isDragging) {
+    let x = e.clientX - offsetX;
+    human.style.left = x + 'px';
+    revealPanel();
+  }
 });
+
+// Optional: touch events for mobile
+human.addEventListener('touchstart', (e)=>{
+  isDragging = true;
+  offsetX = e.touches[0].clientX - human.getBoundingClientRect().left;
+});
+
+document.addEventListener('touchend', ()=>{
+  if (isDragging) {
+    isDragging = false;
+    gsap.to(human, {x: window.innerWidth/2 - 100, duration: 0.8, ease:"elastic.out(1,0.5)"});
+    gsap.to(loginPanel, {x: window.innerWidth/2 - window.innerWidth/2, duration:0.8, ease:"elastic.out(1,0.5)"});
+  }
+});
+
+document.addEventListener('touchmove', (e)=>{
+  if (isDragging) {
+    let x = e.touches[0].clientX - offsetX;
+    human.style.left = x + 'px';
+    revealPanel();
+  }
+});
+
+// Animate slight bounce of human while idle
+gsap.to(human, {y: "-=10", duration:1.2, repeat:-1, yoyo:true, ease:"sine.inOut"});
 </script>
+
 </body>
 </html>
