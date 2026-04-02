@@ -1,115 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>3D Hero Section</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      background: #000;
-    }
+<meta charset="UTF-8">
+<title>Artistic 3D Hero</title>
 
-    #hero-text {
-      position: absolute;
-      top: 50%;
-      left: 10%;
-      transform: translateY(-50%);
-      color: white;
-      z-index: 10;
-    }
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
 
-    #hero-text h1 {
-      font-size: 60px;
-      margin: 0;
-    }
+  .hero-text {
+    position: absolute;
+    top: 50%;
+    left: 8%;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
 
-    #hero-text p {
-      font-size: 20px;
-      opacity: 0.7;
-    }
-  </style>
+  .hero-text h1 {
+    font-size: 64px;
+    margin: 0;
+    color: #111;
+    letter-spacing: -2px;
+  }
+
+  .hero-text p {
+    font-size: 18px;
+    color: #666;
+    margin-top: 10px;
+  }
+</style>
 </head>
+
 <body>
 
-<div id="hero-text">
-  <h1>Future is 3D</h1>
-  <p>Interactive. Cinematic. Powerful.</p>
+<div class="hero-text">
+  <h1>Creative Motion</h1>
+  <p>Elegant. Dynamic. Alive.</p>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 
 <script>
-  // Scene
-  const scene = new THREE.Scene();
+const scene = new THREE.Scene();
 
-  // Camera
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  camera.position.z = 5;
+// Camera
+const camera = new THREE.PerspectiveCamera(
+  60,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.z = 6;
 
-  // Renderer
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+// Renderer
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0xffffff);
+document.body.appendChild(renderer.domElement);
 
-  // Geometry (3D object)
-  const geometry = new THREE.TorusKnotGeometry(1, 0.3, 200, 32);
+// Light (soft studio feel)
+const light = new THREE.DirectionalLight(0xffffff, 1.5);
+light.position.set(5, 5, 5);
+scene.add(light);
 
-  // Material (shiny)
+const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+scene.add(ambient);
+
+// Group for slices
+const group = new THREE.Group();
+scene.add(group);
+
+// Create pizza slices
+const slices = [];
+const totalSlices = 8;
+const radius = 2;
+
+for (let i = 0; i < totalSlices; i++) {
+  const angleStart = (i / totalSlices) * Math.PI * 2;
+  const angleEnd = ((i + 1) / totalSlices) * Math.PI * 2;
+
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0);
+  shape.absarc(0, 0, radius, angleStart, angleEnd, false);
+  shape.lineTo(0, 0);
+
+  const geometry = new THREE.ExtrudeGeometry(shape, {
+    depth: 0.3,
+    bevelEnabled: true,
+    bevelThickness: 0.05,
+    bevelSize: 0.05,
+    bevelSegments: 2
+  });
+
   const material = new THREE.MeshStandardMaterial({
-    color: 0x00ffff,
-    metalness: 0.8,
-    roughness: 0.2
+    color: 0xeeeeee,
+    metalness: 0.2,
+    roughness: 0.3
   });
 
-  const mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
+  const slice = new THREE.Mesh(geometry, material);
 
-  // Lights
-  const light1 = new THREE.PointLight(0xffffff, 2);
-  light1.position.set(5, 5, 5);
-  scene.add(light1);
+  // Start hidden and far
+  slice.scale.set(0.001, 0.001, 0.001);
+  slice.position.z = -2;
 
-  const light2 = new THREE.PointLight(0x00ffff, 2);
-  light2.position.set(-5, -5, -5);
-  scene.add(light2);
+  group.add(slice);
+  slices.push(slice);
+}
 
-  // Mouse interaction
-  let mouseX = 0;
-  let mouseY = 0;
+// Animate slices appearing one by one
+let time = 0;
 
-  document.addEventListener('mousemove', (event) => {
-    mouseX = (event.clientX - window.innerWidth / 2) * 0.002;
-    mouseY = (event.clientY - window.innerHeight / 2) * 0.002;
+function animate() {
+  requestAnimationFrame(animate);
+
+  time += 0.03;
+
+  slices.forEach((slice, i) => {
+    const delay = i * 0.3;
+
+    if (time > delay) {
+      const t = Math.min((time - delay), 1);
+
+      slice.scale.set(t, t, t);
+      slice.position.z = -2 + t * 2;
+
+      // slight elegant rotation
+      slice.rotation.z += 0.01;
+    }
   });
 
-  // Animation loop
-  function animate() {
-    requestAnimationFrame(animate);
+  // subtle floating motion
+  group.rotation.y += 0.003;
 
-    mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.01;
+  renderer.render(scene, camera);
+}
 
-    mesh.rotation.x += mouseY;
-    mesh.rotation.y += mouseX;
+animate();
 
-    renderer.render(scene, camera);
-  }
-
-  animate();
-
-  // Responsive
-  window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-  });
+// Responsive
+window.addEventListener('resize', () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
 </script>
 
 </body>
